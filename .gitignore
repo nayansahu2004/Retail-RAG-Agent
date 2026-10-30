@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+models/
+artifacts/
+data/raw/catalog.csv
+eval/results/
+eval/golden_set.jsonl

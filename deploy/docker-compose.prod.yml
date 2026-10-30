@@ -1,0 +1,16 @@
+# Production compose file used on the EC2 host. The image is built and pushed
+# by GitHub Actions; the host only pulls it. ``IMAGE`` is injected by the
+# deploy step as ``ghcr.io/<owner>/retail-rag-agent:<git-sha>``.
+services:
+  api:
+    image: ${IMAGE:?IMAGE is not set}
+    env_file: .env
+    ports:
+      - "80:8000"
+    restart: unless-stopped
+    mem_limit: 1600m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

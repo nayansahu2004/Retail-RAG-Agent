@@ -1,0 +1,8 @@
+services:
+  api:
+    build: .
+    image: retail-rag-agent:local
+    env_file: .env
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

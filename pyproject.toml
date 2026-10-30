@@ -1,0 +1,18 @@
+[project]
+name = "retail-rag-agent"
+version = "1.0.0"
+description = "Hybrid-search RAG shopping assistant with a hand-written multi-agent research mode"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
