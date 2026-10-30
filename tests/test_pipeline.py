@@ -84,3 +84,10 @@ def test_low_rerank_score_answers_not_found_without_answer_call(pipeline, fake_l
     result = pipeline.answer("anything", "s6")
     assert result.refused and "answer" not in fake_llm.kinds()
     assert settings.support_contact in result.answer
+
+
+def test_category_list_is_always_in_the_answer_prompt(pipeline, fake_llm):
+    pipeline.answer("Do you sell refrigerators?", "s7")
+    answer_call = next(c for c in fake_llm.calls if c["kind"] == "answer")
+    assert "Laptops, Running Shoes" in answer_call["system"]
+    assert "does not sell it" in answer_call["system"]

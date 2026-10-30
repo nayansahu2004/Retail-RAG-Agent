@@ -14,6 +14,8 @@ The full RAG answer flow (Quick answer mode):
 4. GUARDRAIL: if even the best chunk is a poor match, answer "not found" with
    the support contact, without calling the LLM.
 5. GENERATE: grounded JSON answer {"answer", "coverage"} with [n] citations.
+   The prompt always includes the store's category list, so "do you sell X?"
+   gets a clear yes or no even when X is nowhere in the retrieved chunks.
    Coverage (full / partial / none) is reported by the model, so the code does
    not have to guess from the wording whether the bot answered.
 6. Parse citations, save the turn, return timings.
@@ -114,6 +116,8 @@ class RAGPipeline:
         self.llm = llm
         self.sessions = sessions
         self.settings = settings
+        # Small, always-true store facts, built once from the index.
+        self.categories = sorted({c.metadata["category"] for c in retriever.chunks if c.source_type == "product"})
 
     def plan(self, question: str, history: list[dict]) -> list[str]:
         prompt = f"Conversation:\n{format_history(history) or 'none'}\n\nLatest message: {question}"
@@ -158,7 +162,7 @@ class RAGPipeline:
                 f"(Searches used: {' | '.join(queries)})"
             )
             result = self.llm.generate(
-                answer_system_prompt(s.support_contact),
+                answer_system_prompt(s.support_contact, self.categories),
                 [*history, {"role": "user", "content": user_message}],
                 json_mode=True,
             )
